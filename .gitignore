@@ -60,3 +60,5 @@ typings/
 # Output directory
 /public
 
+/api/node_modules/
+/.idea

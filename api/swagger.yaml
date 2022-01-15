@@ -1,0 +1,52 @@
+swagger: "2.0"
+info:
+  description: "This is a sample application to produce tracking order/tracking data"
+  version: "1.0.0"
+  title: "Order Service"
+  contact:
+    email: "whitehorse5353@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:3000"
+basePath: "/"
+tags:
+  - name: "Orders/Tracking"
+    description: "Detailed Orders/Checkpoints detail"
+schemes:
+  - "http"
+paths:
+  /orders:
+    post:
+      tags:
+        - "Orders"
+      summary: "Get available Orders/Checkpoint information"
+      description: ""
+      operationId: "getOrders"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Supply given user email id to retrive the orders"
+          required: true
+          schema:
+            $ref: "#/definitions/OrdersPayload"
+      responses:
+        405:
+          description: "Invalid input"
+definitions:
+  OrdersPayload:
+    type: "object"
+    required:
+      - "user_email"
+    properties:
+      user_email:
+        type: "string"
+        format: "email"
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
