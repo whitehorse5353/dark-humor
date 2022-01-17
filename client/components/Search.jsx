@@ -3,21 +3,29 @@ import {useNavigate} from 'react-router-dom'
 import {useQuery} from 'react-query';
 import Quantity from './Quantity';
 
-const QuantityDispatch = React.createContext(null);
+export const QuantityDispatch = React.createContext(null);
 
 const Basket = () => {
 
+    const [basketState, setBasketState] = useState();
     const quantityReducer = (state, action) => {
         switch (action.type) {
-            case "BUTTON_CLICKED":
-                //action.state      // like this
-                return [...state, "goodbye"];
+            case 'QUANTITY_DECREASED':
+                console.log('QUANTITY_DECREASED!!!');
+                console.log(state, action);
+
+                return {...state, ...{updatedQuantity: action.value, productId: action.productId}};
+            case 'QUANTITY_INCREASED':
+                console.log('QUANTITY_INCREASED!!!');
+                console.log(state, action);
+                return {...state, ...{updatedQuantity: action.value, productId: action.productId}};
             default:
                 return state;
         }
     }
 
-    const [state, dispatch] = useReducer(quantityReducer, store);
+    const [quantityState, dispatch] = useReducer(quantityReducer, {});
+    console.log(`quantityState`, quantityState);
 
     const {isLoading, error, data} = useQuery('basketItems', async () =>
         await fetch(`http://localhost:3001/basket`).then(response => response.json())
@@ -32,6 +40,7 @@ const Basket = () => {
     }
 
     const {basket} = data;
+    // setBasketState(basket);
     return <>
         <nav>
             <a className="links logo" href="#">Apps</a>
@@ -59,11 +68,20 @@ const Basket = () => {
             <tbody>
             <QuantityDispatch.Provider value={dispatch}>
                 {basket.map(item => {
+                    console.log(`basketState`, basketState);
                     return <tr key={item.sku}>
                         <td data-label="" className="left">{`${item.name}, ${!item.size ? 'one size' : item.size}`}</td>
-                        <td data-label="Price">{item.price}</td>
-                        <td data-label="Quantity"><Quantity stockLevel={item.stockLevel} productId={item.id}/></td>
-                        <td data-label="Cost" className="right"></td>
+                        <td data-label="Price">£{item.price}</td>
+                        <td data-label="Quantity">
+                            <Quantity stockLevel={item.stockLevel}
+                                      productId={item.id}
+                                      itemPrice={item.price}
+                                      basketState={basket}
+                            />
+                        </td>
+                        <td data-label="Cost" className="right">
+                            £{(item.id === quantityState.productId) && (item.price * quantityState.updatedQuantity)}
+                        </td>
                         <td data-label="Remove" className="right">
                             <div className='delete-item'
                                  id={item.id}

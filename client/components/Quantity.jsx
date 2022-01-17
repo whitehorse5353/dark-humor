@@ -1,7 +1,8 @@
 import React, {useEffect, useState, useContext} from 'react'
 import {useQuery} from "react-query";
+import {QuantityDispatch} from './Search'
 
-const Quantity = ({stockLevel, productId}) => {
+const Quantity = ({stockLevel, productId, itemPrice, basketState}) => {
     const dispatch = useContext(QuantityDispatch);
     const [quantity, setQuantity] = useState(1);
     const [stock, setStock] = useState(stockLevel);
@@ -30,8 +31,11 @@ const Quantity = ({stockLevel, productId}) => {
                  if (quantity > 1) {
                      const negativeQuantity = quantity - 1;
                      dispatch({
-                         type: 'quantity'
-                     })
+                         type: 'QUANTITY_INCREASED',
+                         value: negativeQuantity,
+                         productId,
+                         basketState
+                     });
                      setQuantity(negativeQuantity);
                  }
              }}>-
@@ -45,6 +49,12 @@ const Quantity = ({stockLevel, productId}) => {
              onClick={() => {
                  if (quantity < stockLevel) {
                      const positiveQuantity = quantity + 1;
+                     dispatch({
+                         type: 'QUANTITY_DECREASED',
+                         value: positiveQuantity,
+                         productId,
+                         basketState
+                     });
                      setQuantity(positiveQuantity);
                  }
              }}>+
