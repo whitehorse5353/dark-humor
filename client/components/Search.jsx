@@ -1,5 +1,4 @@
 import React, {useEffect, useReducer, useState} from 'react'
-import {useNavigate} from 'react-router-dom'
 import {useQuery} from 'react-query';
 import Quantity from './Quantity';
 
@@ -27,6 +26,15 @@ const Basket = () => {
     const [quantityState, dispatch] = useReducer(quantityReducer, {});
     console.log(`quantityState`, quantityState);
 
+    const deleteBasketItem = async (id) => {
+        const deleteBasketRequest = {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'}
+        };
+        await fetch(`http://localhost:3001/basket/${id}`, deleteBasketRequest).then(response =>
+            response.json())
+    }
+
     const {isLoading, error, data} = useQuery('basketItems', async () =>
         await fetch(`http://localhost:3001/basket`).then(response => response.json())
     );
@@ -40,7 +48,6 @@ const Basket = () => {
     }
 
     const {basket} = data;
-    // setBasketState(basket);
     return <>
         <nav>
             <a className="links logo" href="#">Apps</a>
@@ -85,7 +92,9 @@ const Basket = () => {
                         <td data-label="Remove" className="right">
                             <div className='delete-item'
                                  id={item.id}
-                                 onClick={(event) => console.log(event.target.id)}></div>
+                                 onClick={(event) =>
+                                     deleteBasketItem(event.target.id)}>
+                            </div>
                         </td>
                     </tr>
                 })}

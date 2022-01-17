@@ -7,11 +7,13 @@ const {
     getBasketItems,
     updateBasketProductById,
 } = require('../services/basketService');
-const {getProducts, updateProductById} = require("../services/productService");
+
+let cachedBasketItem;
 
 basket.get('/basket', async (request, response) => {
     const numberOfBasketItems = 3;
     const basketItems = await getBasketItems(numberOfBasketItems);
+    cachedBasketItem = basketItems;
     if (!basketItems.length) {
         return resourceNotFound(response);
     }
@@ -28,7 +30,11 @@ basket.put('/basket/:id', async (request, response) => {
     return response.json({message: `Basket product - ${id} has been updated!`})
 });
 
-basket.delete('/basket', async (request, response) => {
-
+basket.delete('/basket/:id', (request, response) => {
+    const {id: basketItemId} = request.params;
+    const deletedResponse = cachedBasketItem.filter(({id}) =>
+        Number(basketItemId) !== id);
+    return response.json(deletedResponse);
 });
+
 module.exports = basket;
