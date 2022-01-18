@@ -77,14 +77,17 @@ nav .links:hover {
 }
 
 table {
-    border: 1px solid #ccc;
-    border-collapse: collapse;
     margin: 0;
     padding: 0;
     width: 60%;
     table-layout: fixed;
     position: absolute;
     left: 20%;
+    border-collapse: collapse;
+}
+
+.highlighter {
+    border-bottom: 2px solid #DDD;
 }
 
 table caption {
@@ -103,7 +106,6 @@ table caption.secondary {
 }
 
 table tr {
-    border: 1px solid #ddd;
     padding: .35em;
     font-size: 14px;
 }
@@ -156,13 +158,20 @@ table td.right {
     margin: 4px 0 0 -16px;
 }
 
+.small-screen {
+    display: none;
+}
+
 @media screen and (max-width: 600px) {
     table {
         border: 0;
         width: 80%;
         left: 10%
+    }
 
-}
+    table th, table td {
+        padding: .625em 0;
+    }
 
     table caption {
         font-size: 1.3em;
@@ -180,16 +189,40 @@ table td.right {
     }
 
     table tr {
-        border-bottom: 3px solid #ddd;
         display: block;
-        margin-bottom: .625em;
+        margin-bottom: 35px;
     }
 
     table td {
-        border-bottom: 1px solid #ddd;
         display: block;
         font-size: 14px;
         text-align: right;
+    }
+
+    table td.left {
+        font-size: 16px;
+        border-bottom: 2px solid #DDD;
+    }
+
+    td .delete-item {
+        float: right;
+    }
+
+    .price-info {
+        margin: 20px 0;
+        padding: inherit;
+    }
+
+    .price-info.spacer {
+        margin-top: 60px;
+    }
+
+    .price-info td {
+        padding: inherit;
+    }
+
+    .price-info .left {
+        border-bottom: none;
     }
 
     table td::before {
@@ -200,10 +233,32 @@ table td.right {
         content: attr(data-label);
         float: left;
         text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    .quantity-stepper {
+        width: 25%;
     }
 
     table td:last-child {
         border-bottom: 0;
+    }
+
+    table td.static-data {
+        padding: inherit;
+    }
+
+    .small-screen {
+        display: inline-block;
+        float: right;
+    }
+
+    .price-info td:last-child {
+        display: none;
+    }
+
+    .price-info td:last-child.buy-now {
+        display: block;
     }
 }
 

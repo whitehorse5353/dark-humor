@@ -87,11 +87,11 @@ const Basket = () => {
             </caption>
             <thead>
             <tr>
-                <th scope="col" className="left">Product</th>
-                <th scope="col">Price</th>
-                <th scope="col">Quantity</th>
-                <th scope="col" className="right">Cost</th>
-                <th scope="col"></th>
+                <th scope="col" className="left bold highlighter">Product</th>
+                <th scope="col" className="bold highlighter">Price</th>
+                <th scope="col" className="bold highlighter">Quantity</th>
+                <th scope="col" className="right bold highlighter">Cost</th>
+                <th scope="col" className="highlighter"></th>
             </tr>
             </thead>
             <tbody>
@@ -124,30 +124,42 @@ const Basket = () => {
                     </tr>
                 })}
             </QuantityDispatch.Provider>
-            <tr>
-                <td scope="row" data-label="" className="left static-data">Subtotal</td>
+            <tr className="price-info spacer">
+                <td scope="row" data-label="" className="left static-data">Subtotal
+                    <div className="small-screen">
+                        £{subTotal.toFixed(2)}
+                    </div>
+                </td>
                 <td data-label=""></td>
                 <td data-label=""></td>
                 <td data-label=""
                     className="right static-data">£{subTotal.toFixed(2)}</td>
             </tr>
-            <tr>
-                <td scope="row" data-label="" className="left">VAT at {VATPercentage}%</td>
+            <tr className="price-info">
+                <td scope="row" data-label="" className="left">VAT at {VATPercentage}%
+                    <div className="small-screen">
+                        £{getVATPercentage(subTotal).toFixed(2)}
+                    </div>
+                </td>
                 <td data-label=""></td>
                 <td data-label=""></td>
                 <td data-label="" className="right">£{getVATPercentage(subTotal).toFixed(2)}</td>
             </tr>
-            <tr>
-                <td scope="row" data-label="" className="left">Total cost</td>
+            <tr className="price-info">
+                <td scope="row" data-label="" className="left bold">Total cost
+                    <div className="small-screen bold">
+                        £{(subTotal + getVATPercentage(subTotal)).toFixed(2)}
+                    </div>
+                </td>
                 <td data-label=""></td>
                 <td data-label=""></td>
-                <td data-label="" className="right">£{(subTotal + getVATPercentage(subTotal)).toFixed(2)}</td>
+                <td data-label="" className="right bold">£{(subTotal + getVATPercentage(subTotal)).toFixed(2)}</td>
             </tr>
-            <tr>
+            <tr className="price-info">
                 <td scope="row" data-label="" className="left"></td>
                 <td data-label=""></td>
                 <td data-label=""></td>
-                <td data-label="" className="right"></td>
+                <td data-label="" className="right buy-now"><input type="button" value="BUY NOW"/></td>
             </tr>
             </tbody>
         </table>
