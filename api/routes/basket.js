@@ -12,7 +12,7 @@ let cachedBasketItem;
 
 basket.get('/basket', async (request, response) => {
     const numberOfBasketItems = 3;
-    const basketItems = await getBasketItems(numberOfBasketItems);
+    const basketItems = (!cachedBasketItem || !cachedBasketItem.length) ? await getBasketItems(numberOfBasketItems) : cachedBasketItem;
     cachedBasketItem = basketItems;
     if (!basketItems.length) {
         return resourceNotFound(response);
@@ -32,9 +32,9 @@ basket.put('/basket/:id', async (request, response) => {
 
 basket.delete('/basket/:id', (request, response) => {
     const {id: basketItemId} = request.params;
-    const deletedResponse = cachedBasketItem.filter(({id}) =>
+    cachedBasketItem = cachedBasketItem.filter(({id}) =>
         Number(basketItemId) !== id);
-    return response.json(deletedResponse);
+    return response.json(cachedBasketItem);
 });
 
 module.exports = basket;

@@ -3,10 +3,7 @@ const db = require('knex')(development);
 const {getProductsByLimit, updateProductById} = require('./productService');
 const {TABLE_NAME} = require('../constants/index');
 
-const getBasketItems = async (limit) => {
-    const basketItems = await getProductsByLimit(limit);
-    return basketItems;
-}
+const getBasketItems = async (limit) => await getProductsByLimit(limit);
 
 const updateBasketProductById = async (id, stockLevel) =>
     await updateProductById(id, stockLevel);

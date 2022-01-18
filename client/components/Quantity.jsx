@@ -2,12 +2,10 @@ import React, {useEffect, useState, useContext} from 'react'
 import {useQuery} from "react-query";
 import {QuantityDispatch} from './Search'
 
-const Quantity = ({stockLevel, productId, itemPrice, basketState}) => {
+const Quantity = ({stockLevel, productId, itemPrice, stockQuantity, item}) => {
     const dispatch = useContext(QuantityDispatch);
     const [quantity, setQuantity] = useState(1);
-    const [stock, setStock] = useState(stockLevel);
-
-    const newStockLevel = (stock - quantity);
+    const newStockLevel = (stockLevel - quantity);
     const updateBasketRequest = {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
@@ -30,11 +28,12 @@ const Quantity = ({stockLevel, productId, itemPrice, basketState}) => {
              onClick={() => {
                  if (quantity > 1) {
                      const negativeQuantity = quantity - 1;
+                     item.stockQuantity = negativeQuantity;
                      dispatch({
-                         type: 'QUANTITY_INCREASED',
-                         value: negativeQuantity,
+                         type: 'QUANTITY_DECREASED',
+                         stockQuantity: negativeQuantity,
                          productId,
-                         basketState
+                         item,
                      });
                      setQuantity(negativeQuantity);
                  }
@@ -49,11 +48,12 @@ const Quantity = ({stockLevel, productId, itemPrice, basketState}) => {
              onClick={() => {
                  if (quantity < stockLevel) {
                      const positiveQuantity = quantity + 1;
+                     item.stockQuantity = positiveQuantity;
                      dispatch({
-                         type: 'QUANTITY_DECREASED',
-                         value: positiveQuantity,
+                         type: 'QUANTITY_INCREASED',
+                         stockQuantity: positiveQuantity,
                          productId,
-                         basketState
+                         item,
                      });
                      setQuantity(positiveQuantity);
                  }

@@ -6,48 +6,70 @@ export const QuantityDispatch = React.createContext(null);
 
 const Basket = () => {
 
-    const [basketState, setBasketState] = useState();
-    const quantityReducer = (state, action) => {
-        switch (action.type) {
-            case 'QUANTITY_DECREASED':
-                console.log('QUANTITY_DECREASED!!!');
-                console.log(state, action);
+    const VATPercentage = 20;
 
-                return {...state, ...{updatedQuantity: action.value, productId: action.productId}};
+    let [subTotal, setSubTotal] = useState(0);
+
+    const computeSubTotal = (basketState) => basketState.reduce((accumulatedPrice, item) => {
+        if (item.stockQuantity) {
+            return accumulatedPrice + (item.price * item.stockQuantity);
+        }
+        return accumulatedPrice + item.price;
+    }, 0);
+
+    const getVATPercentage = () => (VATPercentage / 100) * subTotal;
+
+    const quantityReducer = (state, {type, basket, stockQuantity, productId, item}) => {
+        switch (type) {
+            case 'SET_BASKET_STATE':
+                const getSubtotalInitialState = computeSubTotal(basket);
+                setSubTotal(getSubtotalInitialState);
+                return basket;
+            case 'UPDATE_BASKET_STATE':
+                const getSubtotalUpdateState = computeSubTotal(basket);
+                setSubTotal(getSubtotalUpdateState);
+                return basket;
+            case 'QUANTITY_DECREASED':
+                const getSubtotalUpdateStateWhenQuantityRemoved = computeSubTotal(state);
+                setSubTotal(getSubtotalUpdateStateWhenQuantityRemoved);
+                return [...state];
             case 'QUANTITY_INCREASED':
-                console.log('QUANTITY_INCREASED!!!');
-                console.log(state, action);
-                return {...state, ...{updatedQuantity: action.value, productId: action.productId}};
+                const getSubtotalUpdateStateWhenQuantityAdded = computeSubTotal(state);
+                setSubTotal(getSubtotalUpdateStateWhenQuantityAdded);
+                return [...state];
             default:
                 return state;
         }
     }
 
     const [quantityState, dispatch] = useReducer(quantityReducer, {});
-    console.log(`quantityState`, quantityState);
-
+// console.log(quantityState);
+// console.log('quantityState');
     const deleteBasketItem = async (id) => {
         const deleteBasketRequest = {
             method: 'DELETE',
             headers: {'Content-Type': 'application/json'}
         };
-        await fetch(`http://localhost:3001/basket/${id}`, deleteBasketRequest).then(response =>
-            response.json())
+        await fetch(`http://localhost:3001/basket/${id}`, deleteBasketRequest).then(async response => {
+            const updatedBasket = await response.json();
+            // setBasketState(updatedBasket);
+            dispatch({
+                type: 'UPDATE_BASKET_STATE',
+                basket: updatedBasket,
+            });
+        });
     }
 
-    const {isLoading, error, data} = useQuery('basketItems', async () =>
-        await fetch(`http://localhost:3001/basket`).then(response => response.json())
-    );
+    useEffect(async () => {
+        await fetch(`http://localhost:3001/basket`).then(async response => {
+            const {basket} = await response.json();
+            dispatch({
+                type: 'SET_BASKET_STATE',
+                basket,
+            });
+        })
+    }, []);
 
-    if (isLoading) {
-        return <>Loading...</>;
-    }
-
-    if (error) {
-        console.error(error);
-    }
-
-    const {basket} = data;
     return <>
         <nav>
             <a className="links logo" href="#">Apps</a>
@@ -74,20 +96,23 @@ const Basket = () => {
             </thead>
             <tbody>
             <QuantityDispatch.Provider value={dispatch}>
-                {basket.map(item => {
-                    console.log(`basketState`, basketState);
+                {quantityState.length && quantityState.map(item => {
                     return <tr key={item.sku}>
                         <td data-label="" className="left">{`${item.name}, ${!item.size ? 'one size' : item.size}`}</td>
                         <td data-label="Price">£{item.price}</td>
                         <td data-label="Quantity">
+                            {!item.hasOwnProperty('stockQuantity') ? item.stockQuantity = 0 : ''}
                             <Quantity stockLevel={item.stockLevel}
                                       productId={item.id}
                                       itemPrice={item.price}
-                                      basketState={basket}
+                                      stockQuantity={item.stockQuantity}
+                                      item={item}
                             />
                         </td>
                         <td data-label="Cost" className="right">
-                            £{(item.id === quantityState.productId) && (item.price * quantityState.updatedQuantity)}
+                            £{(item.stockQuantity
+                            ? (item.price * item.stockQuantity).toFixed(2)
+                            : item.price)}
                         </td>
                         <td data-label="Remove" className="right">
                             <div className='delete-item'
@@ -103,38 +128,29 @@ const Basket = () => {
                 <td scope="row" data-label="" className="left static-data">Subtotal</td>
                 <td data-label=""></td>
                 <td data-label=""></td>
-                <td data-label="" className="right static-data">sub total sum</td>
+                <td data-label=""
+                    className="right static-data">£{subTotal.toFixed(2)}</td>
             </tr>
             <tr>
-                <td scope="row" data-label="" className="left">VAT at 20%</td>
+                <td scope="row" data-label="" className="left">VAT at {VATPercentage}%</td>
                 <td data-label=""></td>
                 <td data-label=""></td>
-                <td data-label="" className="right">collected vat %</td>
+                <td data-label="" className="right">£{getVATPercentage(subTotal).toFixed(2)}</td>
             </tr>
             <tr>
                 <td scope="row" data-label="" className="left">Total cost</td>
                 <td data-label=""></td>
                 <td data-label=""></td>
-                <td data-label="" className="right">total cost</td>
+                <td data-label="" className="right">£{(subTotal + getVATPercentage(subTotal)).toFixed(2)}</td>
             </tr>
             <tr>
                 <td scope="row" data-label="" className="left"></td>
                 <td data-label=""></td>
                 <td data-label=""></td>
-                <td data-label="" className="right">total cost</td>
+                <td data-label="" className="right"></td>
             </tr>
             </tbody>
         </table>
-        {/*<div className="form">*/}
-        {/*    <h3>*/}
-        {/*        Please enter your email address to see your recent orders*/}
-        {/*    </h3>*/}
-        {/*    <label>Email</label>*/}
-        {/*    <input type="text" id="email" onChange={({target: {value}}) => setEmail(value)}/>*/}
-        {/*    <input type="button" className={`${!isValid && "disabled"}`} value="SEND"*/}
-        {/*           disabled={!isValid}*/}
-        {/*           onClick={switchView}/>*/}
-        {/*</div>*/}
     </>
 }
 
