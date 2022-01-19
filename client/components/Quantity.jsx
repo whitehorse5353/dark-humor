@@ -1,23 +1,16 @@
 import React, {useEffect, useState, useContext} from 'react'
-import {useQuery} from "react-query";
-import {QuantityDispatch} from './Search'
+import {QuantityDispatch} from './Basket'
 
-const Quantity = ({stockLevel, productId, itemPrice, stockQuantity, item}) => {
+const Quantity = ({stockLevel, productId, item}) => {
     const dispatch = useContext(QuantityDispatch);
     const [quantity, setQuantity] = useState(1);
     const newStockLevel = (stockLevel - quantity);
+
     const updateBasketRequest = {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({stockLevel: newStockLevel})
     };
-    // const {isLoading, error, data} = useQuery('updateBasket', () =>
-    //     fetch(`http://localhost:3001/basket/${productId}`, updateBasketRequest).then(response => response.json())
-    // );
-    // console.log(isLoading);
-    // if (isLoading) return `Loading...`;
-    // console.log(error);
-    // console.log(`updated basked items:, ${data}`);
 
     useEffect(async () =>
             await fetch(`http://localhost:3001/basket/${productId}`, updateBasketRequest),

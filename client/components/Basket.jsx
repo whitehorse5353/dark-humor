@@ -1,5 +1,4 @@
 import React, {useEffect, useReducer, useState} from 'react'
-import {useQuery} from 'react-query';
 import Quantity from './Quantity';
 
 export const QuantityDispatch = React.createContext(null);
@@ -19,7 +18,7 @@ const Basket = () => {
 
     const getVATPercentage = () => (VATPercentage / 100) * subTotal;
 
-    const quantityReducer = (state, {type, basket, stockQuantity, productId, item}) => {
+    const quantityReducer = (state, {type, basket}) => {
         switch (type) {
             case 'SET_BASKET_STATE':
                 const getSubtotalInitialState = computeSubTotal(basket);
@@ -43,8 +42,7 @@ const Basket = () => {
     }
 
     const [quantityState, dispatch] = useReducer(quantityReducer, {});
-// console.log(quantityState);
-// console.log('quantityState');
+
     const deleteBasketItem = async (id) => {
         const deleteBasketRequest = {
             method: 'DELETE',
@@ -52,7 +50,6 @@ const Basket = () => {
         };
         await fetch(`http://localhost:3001/basket/${id}`, deleteBasketRequest).then(async response => {
             const updatedBasket = await response.json();
-            // setBasketState(updatedBasket);
             dispatch({
                 type: 'UPDATE_BASKET_STATE',
                 basket: updatedBasket,
@@ -91,7 +88,7 @@ const Basket = () => {
                 <th scope="col" className="bold highlighter">Price</th>
                 <th scope="col" className="bold highlighter">Quantity</th>
                 <th scope="col" className="right bold highlighter">Cost</th>
-                <th scope="col" className="highlighter"></th>
+                <th scope="col" className="highlighter"/>
             </tr>
             </thead>
             <tbody>
@@ -104,8 +101,6 @@ const Basket = () => {
                             {!item.hasOwnProperty('stockQuantity') ? item.stockQuantity = 0 : ''}
                             <Quantity stockLevel={item.stockLevel}
                                       productId={item.id}
-                                      itemPrice={item.price}
-                                      stockQuantity={item.stockQuantity}
                                       item={item}
                             />
                         </td>
@@ -130,8 +125,8 @@ const Basket = () => {
                         £{subTotal.toFixed(2)}
                     </div>
                 </td>
-                <td data-label=""></td>
-                <td data-label=""></td>
+                <td data-label=""/>
+                <td data-label=""/>
                 <td data-label=""
                     className="right static-data">£{subTotal.toFixed(2)}</td>
             </tr>
@@ -141,8 +136,8 @@ const Basket = () => {
                         £{getVATPercentage(subTotal).toFixed(2)}
                     </div>
                 </td>
-                <td data-label=""></td>
-                <td data-label=""></td>
+                <td data-label=""/>
+                <td data-label=""/>
                 <td data-label="" className="right">£{getVATPercentage(subTotal).toFixed(2)}</td>
             </tr>
             <tr className="price-info">
@@ -151,15 +146,16 @@ const Basket = () => {
                         £{(subTotal + getVATPercentage(subTotal)).toFixed(2)}
                     </div>
                 </td>
-                <td data-label=""></td>
-                <td data-label=""></td>
+                <td data-label=""/>
+                <td data-label=""/>
                 <td data-label="" className="right bold">£{(subTotal + getVATPercentage(subTotal)).toFixed(2)}</td>
             </tr>
             <tr className="price-info">
-                <td scope="row" data-label="" className="left"></td>
-                <td data-label=""></td>
-                <td data-label=""></td>
-                <td data-label="" className="right buy-now"><input type="button" value="BUY NOW"/></td>
+                <td scope="row" data-label="" className="left"/>
+                <td data-label=""/>
+                <td data-label=""/>
+                <td data-label="" className="right buy-now">
+                    <input type="button" className="buy-now-button" value="BUY NOW"/></td>
             </tr>
             </tbody>
         </table>
