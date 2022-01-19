@@ -1,8 +1,6 @@
 'use strict';
 
 require('dotenv').config();
-const {resolve} = require('path');
-console.log(resolve(__dirname, 'config'))
 const {application, corsConfig} = require('./config');
 const {join} = require('path');
 const express = require('express');
@@ -23,8 +21,6 @@ require('./routes/registerRoutes')(app);
 app.use(handle404);
 app.use(handleAll);
 
-console.log(application);
-console.log('application');
 app.listen(application.port, () =>
     console.log(`Listening on port http://${application.host}:${application.port}`));
 
