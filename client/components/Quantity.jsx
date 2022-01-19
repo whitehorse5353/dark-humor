@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react'
 import {QuantityDispatch} from './Basket'
+import {API_BASE_PATH} from '../App';
 
 const Quantity = ({stockLevel, productId, item}) => {
     const dispatch = useContext(QuantityDispatch);
@@ -13,7 +14,7 @@ const Quantity = ({stockLevel, productId, item}) => {
     };
 
     useEffect(async () =>
-            await fetch(`http://localhost:3001/basket/${productId}`, updateBasketRequest),
+            await fetch(`${API_BASE_PATH}/basket/${productId}`, updateBasketRequest),
         [quantity]);
 
     return <>

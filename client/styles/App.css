@@ -16,8 +16,8 @@ code {
     font-family: 'Libre Franklin';
     font-style: normal;
     src: local(''),
-    url('./styles/fonts/libre-franklin-v7-latin-regular.woff'),
-    url('./styles/fonts/libre-franklin-v7-latin-regular.woff2');
+    url('fonts/libre-franklin-v7-latin-regular.woff'),
+    url('fonts/libre-franklin-v7-latin-regular.woff2');
 }
 
 * {
@@ -284,7 +284,7 @@ td .delete-item {
     width: 18px;
     height: 20px;
     color: #000;
-    background-image: url(./styles/icons/bin.png);
+    background-image: url(icons/bin.png);
     background-repeat: no-repeat;
     margin: 0 auto;
     cursor: pointer;

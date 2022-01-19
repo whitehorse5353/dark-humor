@@ -1,6 +1,6 @@
 import React, {useEffect, useReducer, useState} from 'react'
 import Quantity from './Quantity';
-
+import {API_BASE_PATH} from '../App';
 export const QuantityDispatch = React.createContext(null);
 
 const Basket = () => {
@@ -48,7 +48,7 @@ const Basket = () => {
             method: 'DELETE',
             headers: {'Content-Type': 'application/json'}
         };
-        await fetch(`http://localhost:3001/basket/${id}`, deleteBasketRequest).then(async response => {
+        await fetch(`${API_BASE_PATH}/basket/${id}`, deleteBasketRequest).then(async response => {
             const updatedBasket = await response.json();
             dispatch({
                 type: 'UPDATE_BASKET_STATE',
@@ -58,7 +58,7 @@ const Basket = () => {
     }
 
     useEffect(async () => {
-        await fetch(`http://localhost:3001/basket`).then(async response => {
+        await fetch(`${API_BASE_PATH}/basket`).then(async response => {
             const {basket} = await response.json();
             dispatch({
                 type: 'SET_BASKET_STATE',
